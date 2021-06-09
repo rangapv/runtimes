@@ -1,4 +1,4 @@
-#!/usr/bin/sh
+#!/usr/bin/bash
 set -E
 li=$(uname -s)
 
@@ -9,11 +9,13 @@ else
 	mac=$(sw_vers | grep Mac)
 fi
 
+d1=$(cat /etc/*-release | grep ID= | grep debian)
 
 if [ -z "$mac" ]
 then
-	d1=$(cat /etc/*-release | grep ID= | grep debian)
-        echo $d1
+        
+	echo "It is a Linux Box" 
+
 else
 	echo "It is a Mac"
 
@@ -22,6 +24,12 @@ fi
 
 if [ ! -z "$d1" ]
 then
+    ji=$(cat /etc/*-release | grep ^ID= | grep -v "\"" | awk '{split($0,a,"=");print a[2]}') 
+    ki="${ji,,}"
+    if [ $ki = "debian" ]
+    then
+     echo "It is Debian"
+    fi
     check1=`which containerd`
     check2=$(echo "$?")
     if [ $check2 -ne 0 ]
