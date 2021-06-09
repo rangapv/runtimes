@@ -21,6 +21,8 @@ else
 
 fi
 
+if [ -z "$mac" ]
+then
 
 if [ ! -z "$d1" ]
 then
@@ -52,3 +54,8 @@ then
     fi
 
 fi
+
+
+
+
+fi #end of Mac check
