@@ -22,6 +22,10 @@ fi
 
 if [ ! -z "$d1" ]
 then
+    check1=`which containerd`
+    check2=$(echo "$?")
+    if [ $check2 -ne 0 ]
+    then
     sudo apt -y update
     sudo apt -y upgrade
     sudo apt -y install gnupg 
@@ -35,13 +39,8 @@ then
     sudo mkdir -p /etc/containerd
     containerd config default | sudo tee /etc/containerd/config.toml
     sudo systemctl restart containerd
-    
-    check1=`which containerd`
-    check2=$(echo "$?")
-    if [ $check2 -eq 0 ]
-    then
-	    echo "containerd is running at $check1"
+    else	    
+    echo "containerd is running at $check1"
     fi
-
 
 fi
