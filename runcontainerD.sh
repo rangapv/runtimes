@@ -2,6 +2,15 @@
 set -E
 source <(curl -s https://raw.githubusercontent.com/rangapv/bash-source/main/s1.sh)
 
+configtoml (){
+
+file1="/etc/containerd/config.toml"
+line2="\[plugins\.\"io\.containerd\.grpc\.v1\.cri\"\.containerd\.runtimes\.runc\.options\]"
+line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true"
+sudo sed -i "/$line2/a     $line3" $file1
+
+}
+
 if [ -z "$mac" ]
 then
 
@@ -25,8 +34,9 @@ then
 
     sudo mkdir -p /etc/containerd
     containerd config default | sudo tee /etc/containerd/config.toml
+    configtoml 
     sudo systemctl restart containerd
-    else	    
+    else	   
     echo "containerd is running at $check1"
     fi
     fi
@@ -63,6 +73,7 @@ then
    sudo $cm1 install containerd.io
    sudo mkdir -p /etc/containerd
    containerd config default | sudo tee /etc/containerd/config.toml
+   configtoml
    sudo systemctl restart containerd
    else
     echo "containerd is running at $check1"
