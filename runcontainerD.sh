@@ -3,12 +3,11 @@ set -E
 source <(curl -s https://raw.githubusercontent.com/rangapv/bash-source/main/s1.sh)
 
 configtoml (){
-
 file1="/etc/containerd/config.toml"
 line2="\[plugins\.\"io\.containerd\.grpc\.v1\.cri\"\.containerd\.runtimes\.runc\.options\]"
 line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true"
 sudo sed -i "/$line2/a     $line3" $file1
-
+echo "1" | sudo tee /proc/sys/net/ipv4/ip_forward
 }
 
 if [ -z "$mac" ]
