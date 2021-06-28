@@ -5,6 +5,7 @@ declare -A containerd
 runc=0
 rund=0
 Flag=0
+DFlag=0
 
 kuberun() {
 arrayk=("$@")
@@ -41,6 +42,16 @@ fi
 done
 }
 
+
+runchek() {
+r1=`ps -ef |grep dockerd | grep -v grep | grep containerd | wc -l`
+if [[ ( $r1 -eq 1 ) ]]
+then
+	echo "The kubelet is using the \"dockerd\" as runtime"
+        DFlag=1
+fi
+
+}
 rncd() {
 
 for key in "${!dockerd[@]}"; do
@@ -58,12 +69,13 @@ done
 runc1=( dockerd containerd)
 kuberun "${runc1[@]}"
 rncd
+runchek
 
-if [[ $runc -eq 0 ]]
+if [[ $runc -eq 0 && $DFlag -eq 0 ]]
 then
 	echo "The runtime is Containerd and it is up-and running"
         Flag=1
-elif [[ $rund -eq 0 ]]
+elif [[ $rund -ge 0 && $DFlag -eq 1 ]]
 then
 	echo "The runtime is Docker and it is up-and running"
 	Flag=1
