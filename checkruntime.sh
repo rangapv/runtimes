@@ -6,6 +6,8 @@ runc=0
 rund=0
 Flag=0
 DFlag=0
+crun=0
+drun=0
 
 kuberun() {
 arrayk=("$@")
@@ -75,10 +77,12 @@ if [[ $runc -eq 0 && $DFlag -eq 0 ]]
 then
 	echo "The runtime is Containerd and it is up-and running"
         Flag=1
+	crun=1
 elif [[ $rund -ge 0 && $DFlag -eq 1 ]]
 then
 	echo "The runtime is Docker and it is up-and running"
 	Flag=1
+	drun=1
 else
 	echo "There are no Kubernetes compatible runtime on this box pls install containerd or dockerd"
 fi
