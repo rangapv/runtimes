@@ -49,7 +49,7 @@ runchek() {
 r1=`ps -ef |grep dockerd | grep -v grep | grep containerd | wc -l`
 if [[ ( $r1 -eq 1 ) ]]
 then
-	echo "The kubelet is using the \"dockerd\" as runtime"
+	echo "The containerization runtime on this box is \"dockerd\" "
         DFlag=1
 fi
 
@@ -75,12 +75,12 @@ runchek
 
 if [[ $runc -eq 0 && $DFlag -eq 0 ]]
 then
-	echo "The runtime is Containerd and it is up-and running"
+	echo "The container runtime is \"Containerd\" and it is up-and running"
         Flag=1
 	crun=1
 elif [[ $rund -ge 0 && $DFlag -eq 1 ]]
 then
-	echo "The runtime is Docker and it is up-and running"
+	echo "The container runtime is \"Docker\" and it is up-and running"
 	Flag=1
 	drun=1
 else
