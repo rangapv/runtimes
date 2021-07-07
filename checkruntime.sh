@@ -21,9 +21,9 @@ do
 dk=$(which $k)
 dk1="$?"
 temp1="$k"
-dks=$(sudo systemctl status $k) 
+dks=$(sudo systemctl status $k 2>&1 > /dev/null)
 dks1="$?"
-
+#echo "dks1 is $dks1"
 if [[ ( $dk1 -ne 0 ) ]]
 then
 	dk1=5
@@ -32,7 +32,7 @@ if [[ ( $dks1 -ne 0 ) ]]
 then
 	dks1=5
 fi
-"$k"[$dk1]=$dks1
+temp1="$k[$dk1]=$dks1"
 if [[ $k = "containerd" ]]
 then
 	containerd[$dk1]=$dks1
@@ -57,11 +57,11 @@ fi
 rncd() {
 
 for key in "${!dockerd[@]}"; do
-    echo "$key ${dockerd[$key]}"
+#    echo "$key ${dockerd[$key]}"
     rund=$(( $key + ${dockerd[$key]} ))
 done
 for key in "${!containerd[@]}"; do
-    echo "$key ${containerd[$key]}"
+#    echo "$key ${containerd[$key]}"
     runc=$(( $key + ${containerd[$key]} ))
 done
 }
