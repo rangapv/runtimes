@@ -47,10 +47,20 @@ done
 
 runchek() {
 r1=`ps -ef |grep dockerd | grep -v grep | grep containerd | wc -l`
-if [[ ( $r1 -eq 1 ) ]]
+r1s="$?"
+r2=`ps -ef |grep dockerd |grep -v grep | wc -l`
+r2s="$?"
+r3=`ps -ef |grep containerd |grep runc |grep -v grep | wc -l`
+r3s="$?"
+
+
+if [[ (( $r2 -eq 1 )) ]]
 then
+  if [[ (( $r3 -gt 1 )) ]]
+  then
 	echo "The containerization runtime on this box is \"dockerd\" "
         DFlag=1
+  fi
 fi
 
 }
@@ -72,7 +82,6 @@ runc1=( dockerd containerd)
 kuberun "${runc1[@]}"
 rncd
 runchek
-
 if [[ $runc -eq 0 && $DFlag -eq 0 ]]
 then
 	echo "The container runtime is \"Containerd\" and it is up-and running"
