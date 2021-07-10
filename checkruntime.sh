@@ -8,6 +8,8 @@ Flag=0
 DFlag=0
 crun=0
 drun=0
+cnrun=0
+dnrun=0
 
 kuberun() {
 arrayk=("$@")
@@ -60,6 +62,7 @@ for key in "${!dockerd[@]}"; do
       DFlag=1
       drun=1
       Flag=1
+      dnrun=1
     elif  [[ (( $key -eq 0 )) && (( $rund -eq 0 )) ]]
     then
       echo "The container runtime is Dockerd and it is running"
@@ -75,6 +78,7 @@ for key in "${!containerd[@]}"; do
       echo "The container runtime is Containerd and it is not running"
       Flag=1
       crun=1
+      cnrun=1
     elif  [[ (( $key -eq 0 )) && (( $runc -eq 0 )) && (( $DFlag -lt 1 )) ]]
     then
       echo "The container runtime is Containerd and it is running"
