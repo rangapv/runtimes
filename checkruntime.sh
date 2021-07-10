@@ -22,7 +22,8 @@ dk=$(which $k)
 dk1=$?
 dks=$(sudo systemctl status $k 2>&1 > /dev/null)
 dks1=$?
-dksd=`ps -ef |grep $k |grep -v grep | wc -l`
+#dksd=`ps -ef |grep $k |grep -v grep | wc -l`
+dksd=`ps -ef | grep containerd | grep -v grep | awk '{split($0,a," "); if (a[8]~/containerd/) print $0}' | wc -l`
 #echo "dks1 is $dks1"
 if [[ (( $dk1 -ne 0 )) ]]
 then
@@ -32,11 +33,11 @@ if [[ (( $dks1 -ne 0 )) ]]
 then
 	dks1=5
 fi
-if [[ (( $dksd -gt 0 )) ]]
+if [[ (( $dksd -eq 0 )) ]]
 then
        (( dks1=$dks1+5 ))
 fi
-temp1="$k[$dk1]=$dks1"
+#temp1="$k[$dk1]=$dks1"
 #echo "temp1 is $temp1"
 if [[ $k = "containerd" ]]
 then
@@ -53,22 +54,31 @@ done
 rncd() {
 
 for key in "${!dockerd[@]}"; do
-#    echo "$key ${dockerd[$key]}"
     rund=$(( $key + ${dockerd[$key]} ))
-    if [[ (( $key -eq 0 )) && (( $rund -gt 0 )) ]]
+    if [[ (( $key -eq 0 )) && (( $rund -gt 5 )) ]]
     then
-      echo "The container runtime is DOCKER"
+      echo "The container runtime is Dockerd and it is not running"
       DFlag=1
       drun=1
       Flag=1
-    fi 
+    elif  [[ (( $key -eq 0 )) && (( $rund -eq 0 )) ]]
+    then
+      echo "The container runtime is Dockerd and it is running"
+      DFlag=1
+      drun=1
+      Flag=1
+    fi
 done
 for key in "${!containerd[@]}"; do
-#    echo "$key ${containerd[$key]}"
     runc=$(( $key + ${containerd[$key]} ))
-    if [[ (( $key -eq 0 )) && (( $runc -gt 0 )) && (( $DFlag -lt 1 )) ]]
+    if [[ (( $key -eq 0 )) && (( $runc -gt 5 )) && (( $DFlag -lt 1 )) ]]
     then
-      echo "The container runtime is Containerd"
+      echo "The container runtime is Containerd and it is not running"
+      Flag=1
+      crun=1
+    elif  [[ (( $key -eq 0 )) && (( $runc -eq 0 )) && (( $DFlag -lt 1 )) ]]
+    then
+      echo "The container runtime is Containerd and it is running"
       Flag=1
       crun=1
     fi
