@@ -104,3 +104,10 @@ fi
 
 
 fi #end of Mac check
+
+chkcont=`sudo systemctl status containerd`
+chkconts="$?"
+if [[ (( $chkconts -ne 0 )) ]]
+then
+	sudo systemctl start containerd
+fi
