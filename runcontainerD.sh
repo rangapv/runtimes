@@ -13,10 +13,6 @@ sedo2=`cat $file1 | grep "SystemdCgroup = true"`
 sedo2s="$?"
 sedo3=`cat $file1 | grep "SystemdCgroup" -c`
 sedo3s="$?"
-if [[ (( $sedo3 -gt 1 )) && (( $sedos -eq 0 )) ]]
-then
-	gawk -i inplace '!a[$0]++' $file1
-fi
 if [[ (( $sedo1s -eq 0 )) ]]
 then
 sed -ie 's/SystemdCgroup.*$/SystemdCgroup = true/g' $file1
@@ -27,6 +23,10 @@ line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true"
 sudo sed -i "/$line2/a     $line3" $file1
 else
         echo ""
+fi
+if [[ (( $sedo3 -gt 1 )) && (( $sedos -eq 0 )) ]]
+then
+	gawk -i inplace '!a[$0]++' $file1
 fi
 
 echo "1" | sudo tee /proc/sys/net/ipv4/ip_forward
