@@ -7,9 +7,9 @@ file1="/etc/containerd/config.toml"
 line2="\[plugins\.\"io\.containerd\.grpc\.v1\.cri\"\.containerd\.runtimes\.runc\.options\]"
 line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true"
 
-sedo1=`cat ./$file1 | grep "SystemdCgroup = false"`
+sedo1=`cat $file1 | grep "SystemdCgroup = false"`
 sedo1s="$?"
-sedo2=`cat ./$file1 | grep "SystemdCgroup = true"`
+sedo2=`cat $file1 | grep "SystemdCgroup = true"`
 sedo2s="$?"
 if [ $sedo1s -eq 0 ]
 then
