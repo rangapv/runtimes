@@ -25,7 +25,7 @@ sudo sed -i "/$line2/a     $line3" $file1
 fi
 if [[ (( $sedo3 -gt 1 )) && (( $sedos -eq 0 )) ]]
 then
-	gawk -i inplace '!a[$0]++' $file1
+	sudo gawk -i inplace '!a[$0]++' $file1
 fi
 
 echo "1" | sudo tee /proc/sys/net/ipv4/ip_forward
