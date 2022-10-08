@@ -11,10 +11,16 @@ sedo1=`cat $file1 | grep "SystemdCgroup = false"`
 sedo1s="$?"
 sedo2=`cat $file1 | grep "SystemdCgroup = true"`
 sedo2s="$?"
-if [ $sedo1s -eq 0 ]
+sedo3=`cat $file1 | grep "SystemdCgroup" -c`
+sedo3s="$?"
+if [[ (( $sedo3 -gt 1 )) && (( $sedos -eq 0 )) ]]
+then
+	gawk -i inplace '!a[$0]++' $file1
+fi
+if [[ (( $sedo1s -eq 0 )) ]]
 then
 sed -ie 's/SystemdCgroup.*$/SystemdCgroup = true/g' $file1
-elif [ $sedo2s -ne 0 ]
+elif [[ (( $sedo2s -ne 0 )) ]]
 then
 line2="\[plugins\.\"io\.containerd\.grpc\.v1\.cri\"\.containerd\.runtimes\.runc\.options\]"
 line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true"
