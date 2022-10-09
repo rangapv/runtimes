@@ -51,11 +51,8 @@ then
     sudo apt -y install gnupg 
     curl -fsSl https://download.docker.com/linux/debian/gpg | sudo apt-key add -
     echo "deb [arch=64] https://download.docker.com/linux/debian buster stable" | sudo tee /etc/apt/sources.list.d/docker.list
-    sudo apt update
+    sudo apt -y update
     sudo apt -y install containerd
-    sudo systemctl restart containerd
-
-
     sudo mkdir -p /etc/containerd
     containerd config default | sudo tee /etc/containerd/config.toml
     configtoml 
@@ -89,8 +86,8 @@ then
    sudo $cm1 install -y gnupg lsb-release apt-transport-https ca-certificates
    curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null 
-   sudo $cm1 update
-   sudo $cm1 install containerd.io
+   sudo $cm1 -y update
+   sudo $cm1 -y install containerd.io
    sudo mkdir -p /etc/containerd
    containerd config default | sudo tee /etc/containerd/config.toml
    configtoml
@@ -101,7 +98,6 @@ then
    fi
 
 fi
-
 
 fi #end of Mac check
 
