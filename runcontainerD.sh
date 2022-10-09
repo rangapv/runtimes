@@ -23,7 +23,7 @@ line2="\[plugins\.\"io\.containerd\.grpc\.v1\.cri\"\.containerd\.runtimes\.runc\
 line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true"
 sudo sed -i "/$line2/a     $line3" $file1
 fi
-if [[ (( $sedo3 -gt 1 )) && (( $sedos -eq 0 )) ]]
+if [[ (( $sedo3 -gt 1 )) && (( $sedo3s -eq 0 )) ]]
 then
 	sudo gawk -i inplace '!a[$0]++' $file1
 fi
