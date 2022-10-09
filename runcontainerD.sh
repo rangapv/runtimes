@@ -32,7 +32,7 @@ echo "1" | sudo tee /proc/sys/net/ipv4/ip_forward
 }
 
 
-if [ ! -z "$file1" ]
+if [ ! -s "$file1" ]
 then
 	configtoml
 fi
