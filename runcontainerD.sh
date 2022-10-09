@@ -15,7 +15,7 @@ sedo3=`cat $file1 | grep "SystemdCgroup" -c`
 sedo3s="$?"
 if [[ (( $sedo1s -eq 0 )) ]]
 then
-sudo sed -ie 's/SystemdCgroup.*$/SystemdCgroup = true/g' $file1
+	sudo sed -ie 's/SystemdCgroup.*$/SystemdCgroup = true/g' $file1
 fi
 if [[ (( $sedo2s -ne 0 )) ]]
 then
@@ -31,21 +31,19 @@ fi
 echo "1" | sudo tee /proc/sys/net/ipv4/ip_forward
 }
 
-
-if [ ! -s "$file1" ]
+if [ ! -z "$file1" ]
 then
 	configtoml
 fi
 
 if [ -z "$mac" ]
 then
-
+    check1=`which containerd`
+    check2=$(echo "$?")
 if [ ! -z "$d1" ]
 then
     if [ $ki = "debian" ]
     then
-    check1=`which containerd`
-    check2=$(echo "$?")
     if [ $check2 -ne 0 ]
     then
     sudo apt -y update
@@ -73,8 +71,6 @@ then
     # sudo zypper install -y gcc make openssl-devel libffi-devel zlib-devel wget lsb-release
     count=1
     fi
-    check1=`which containerd`
-    check2=$(echo "$?")
     if [ $check2 -ne 0 ]
     then
      sudo zypper addrepo https://download.opensuse.org/repositories/Virtualization:containers/SLE_15_SP2/Virtualization:containers.repo
@@ -87,8 +83,6 @@ elif [ ! -z "$u1" ]
 then
    if [ $ki = "ubuntu" ]
    then
-   check1=`which containerd`
-   check2=$(echo "$?")
    if [ $check2 -ne 0 ]
    then
    sudo $cm1 -y update
