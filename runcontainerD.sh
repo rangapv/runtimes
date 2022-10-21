@@ -7,20 +7,20 @@ configtoml (){
 line2="\[plugins\.\"io\.containerd\.grpc\.v1\.cri\"\.containerd\.runtimes\.runc\.options\]"
 line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true"
 
-sedo1=`cat $file1 | grep "SystemdCgroup = false"`
+sedo1=`cat $file1 | grep "SystemdCgroup\ \=\ false"`
 sedo1s="$?"
-sedo2=`cat $file1 | grep "SystemdCgroup = true"`
+sedo2=`cat $file1 | grep "SystemdCgroup\ \=\ true"`
 sedo2s="$?"
 sedo3=`cat $file1 | grep "SystemdCgroup" -c`
 sedo3s="$?"
 if [[ (( $sedo1s -eq 0 )) ]]
 then
-	sudo sed -ie 's/SystemdCgroup.*$/SystemdCgroup = true/g' $file1
+	sudo sed -ie 's/SystemdCgroup.*$/SystemdCgroup\ \=\ true/g' $file1
 fi
 if [[ (( $sedo2s -ne 0 )) ]]
 then
 line2="\[plugins\.\"io\.containerd\.grpc\.v1\.cri\"\.containerd\.runtimes\.runc\.options\]"
-line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup = true"
+line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup\ \=\ true"
 sudo sed -i "/$line2/a     $line3" $file1
 fi
 if [[ (( $sedo3 -gt 1 )) && (( $sedo3s -eq 0 )) ]]
