@@ -31,20 +31,20 @@ fi
 echo "1" | sudo tee /proc/sys/net/ipv4/ip_forward
 }
 
-if [ ! -z "$file1" ]
+if [ ! -s "$file1" ]
 then
 	configtoml
 fi
-
 if [ -z "$mac" ]
 then
     check1=`which containerd`
-    check2=$(echo "$?")
+    check2="$?"
+    check1ctd="/etc/containerd/config.toml"
 if [ ! -z "$d1" ]
 then
     if [ $ki = "debian" ]
     then
-    if [ $check2 -ne 0 ]
+    if [[ ! -f "$check1ctd" ]]
     then
     sudo apt -y update
     sudo apt -y upgrade
@@ -68,7 +68,7 @@ then
     # sudo zypper install -y gcc make openssl-devel libffi-devel zlib-devel wget lsb-release
     count=1
     fi
-    if [ $check2 -ne 0 ]
+    if [[ ! -f "$check1ctd" ]]
     then
      sudo zypper addrepo https://download.opensuse.org/repositories/Virtualization:containers/SLE_15_SP2/Virtualization:containers.repo
      sudo zypper refresh
@@ -80,11 +80,12 @@ elif [ ! -z "$u1" ]
 then
    if [ $ki = "ubuntu" ]
    then
-   if [ $check2 -ne 0 ]
+   if [[ ! -z "$check1ctd" || $check2 -ne 0 ]] 
    then
    sudo $cm1 -y update
+   echo "Insside ubuntu"
    sudo $cm1 install -y gnupg lsb-release apt-transport-https ca-certificates
-   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor --yes -o /usr/share/keyrings/docker-archive-keyring.gpg
    echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null 
    sudo $cm1 -y update
    sudo $cm1 -y install containerd.io
@@ -100,7 +101,6 @@ then
 fi
 
 fi #end of Mac check
-
 chkcont=`sudo systemctl status containerd`
 chkconts="$?"
 if [[ (( $chkconts -ne 0 )) ]]
