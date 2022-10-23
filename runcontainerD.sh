@@ -17,7 +17,7 @@ if [[ (( $sedo1s -eq 0 )) ]]
 then
 	sudo sed -ie 's/SystemdCgroup.*$/SystemdCgroup\ \=\ true/g' $file1
 fi
-if [[ (( $sedo2s -ne 0 )) ]]
+if [[ (( $sedo1s -ne 0 )) && (( $sedo2s -ne 0 )) ]]
 then
 line2="\[plugins\.\"io\.containerd\.grpc\.v1\.cri\"\.containerd\.runtimes\.runc\.options\]"
 line3="\ \ \ \ \ \ \ \ \ \ \ \ SystemdCgroup\ \=\ true"
