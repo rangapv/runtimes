@@ -69,18 +69,22 @@ for key in "${!dockerd[@]}"; do
 	    then
 		    echo "docker is installed in ${dockerd[$key]}"
       			Flag=1
+			drun=1
 	    fi
    fi
   
    if [[ ( $key = "systemctl" ) ]]
    then
-            if [[ ( ${dockerd[$key]} != "5")  ]]
+            if [[ ( ${dockerd[$key]} = "0")  ]]
             then
                     echo "docker is default run-time activated by systemctl ${dockerd[$key]}"
 		    DFlag=1
      		    drun=1
       		    Flag=1
-            fi
+	    else
+		    dnrun=1
+	    fi
+
    fi
 
    if [[ ($key = "procn") ]]
@@ -95,6 +99,10 @@ for key in "${!dockerd[@]}"; do
    fi
 
 done
+	    if ( (( $dnrun == 1 )) && (( $drun == 1 )) )
+	    then
+		    echo "Docker is installed but it is not the default container run-time for the kubernetes Cluster"
+	    fi
 
 for key in "${!containerd[@]}"; do
     #rund=$(( $key + ${dockerd[$key]} ))
@@ -104,7 +112,8 @@ for key in "${!containerd[@]}"; do
             if [[ ( ${contaienrd[$key]} != "5")  ]]
             then
                     echo "Container is installed in ${containerd[$key]}"
-                        Flag=1
+                    Flag=1
+		    crun=1
 	    fi
    fi
 
@@ -115,6 +124,8 @@ for key in "${!containerd[@]}"; do
                     echo "Contaienrd is default run-time activated by systemctl"
 		    Flag=1
       		    crun=1
+	    else
+		    cnrun=1
             fi
    fi
 
@@ -128,6 +139,10 @@ for key in "${!containerd[@]}"; do
             fi
    fi
 done
+	    if ( (( $cnrun == 1 )) && (( $crun == 1 )) )
+	    then
+		    echo "Containerd is installed but it is not the default container run-time for the kubernetes Cluster"
+	    fi
 
 }
 
