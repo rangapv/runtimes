@@ -20,80 +20,127 @@ dks1=0
 
 for k in ${arrayk[@]}
 do
-dk=$(which $k)
+dk=`which $k`
 dk1=$?
 dks=$(sudo systemctl status $k 2>&1 > /dev/null)
 dks1=$?
 dks2=0
 dksd=`ps -ef | grep $k | grep -v grep | awk '{split($0,a," "); print a[8]}' | grep $k | wc -l`
+input="systemctl"
+input1="runc"
+input2="procn"
 if [[ (( $dk1 -ne 0 )) ]]
 then
-	dk1=5
+	dk1="5"
 fi
+	#"$k"+=(["$input1"]="$dk1")
 if [[ (( $dks1 -ne 0 )) ]]
 then
-	dks1=5
+	dks1="5"
 fi
-if [[ (( $dksd -eq 0 )) ]]
+
+
+if [[ ( $k = "dockerd" ) ]]
 then
-        dks2=5 
-fi
-#temp1="$k[$dk1]=$dks2"
-#echo "temp1 is $temp1"
-if [[ $k = "containerd" ]]
+dockerd+=([$input1]=$dk)
+dockerd+=([$input]=$dks1)
+dockerd+=([$input2]=$dksd)
+elif [[ ( $k = "containerd" ) ]]
 then
-	containerd[$dk1]=$dks2
-elif [[ $k = "dockerd" ]]
-then
-       dockerd[$dk1]=$dks2
+containerd+=([$input1]=$dk)
+containerd+=([$input]=$dks1)
+containerd+=([$input2]=$dksd)
+else
+	echo "no associative array"
 fi
 
 done
+
 }
 
 
-rncd() {
-
+runcd1() {
 for key in "${!dockerd[@]}"; do
-    rund=$(( $key + ${dockerd[$key]} ))
-    if [[ (( $key -eq 0 )) && (( $rund -eq 5 )) ]]
+    #rund=$(( $key + ${dockerd[$key]} ))
+
+   if [[ ( $key = "runc" ) ]]
     then
-      echo "The container runtime is Dockerd and it is not running"
-      DFlag=1
-      drun=1
-      Flag=1
-      dnrun=1
-    elif  [[ (( $key -eq 0 )) && (( $rund -eq 0 )) ]]
-    then
-      echo "The container runtime is Dockerd and it is running"
-      DFlag=1
-      drun=1
-      Flag=1
-    fi
+	    if [[ ( ${dockerd[$key]} != "5")  ]]
+	    then
+		    echo "docker is installed in ${dockerd[$key]}"
+      			Flag=1
+	    fi
+   fi
+  
+   if [[ ( $key = "systemctl" ) ]]
+   then
+            if [[ ( ${dockerd[$key]} != "5")  ]]
+            then
+                    echo "docker is default run-time activated by systemctl ${dockerd[$key]}"
+		    DFlag=1
+     		    drun=1
+      		    Flag=1
+            fi
+   fi
+
+   if [[ ($key = "procn") ]]
+   then
+	   if ( (( ${dockerd[$key]} >= 5 )) ) 
+            then
+                    echo "docker is the container run-time for the kubernetes cluster"
+		    Flag=1
+		    DFlag=1
+                    drun=1
+            fi
+   fi
+
 done
+
 for key in "${!containerd[@]}"; do
-    runc=$(( $key + ${containerd[$key]} ))
-    if [[ (( $key -eq 0 )) && (( $runc -eq 5 )) && (( $DFlag -lt 1 )) ]]
+    #rund=$(( $key + ${dockerd[$key]} ))
+
+   if [[ ( $key = "runc" ) ]]
     then
-      echo "The container runtime is Containerd and it is not running"
-      Flag=1
-      crun=1
-      cnrun=1
-    elif  [[ (( $key -eq 0 )) && (( $runc -eq 0 )) && (( $DFlag -lt 1 )) ]]
+            if [[ ( ${contaienrd[$key]} != "5")  ]]
+            then
+                    echo "Container is installed in ${containerd[$key]}"
+                        Flag=1
+	    fi
+   fi
+
+   if [[ ( $key = "systemctl" ) ]]
     then
-      echo "The container runtime is Containerd and it is running"
-      Flag=1
-      crun=1
-    fi
+            if [[ ( ${containerd[$key]} = "0")  ]]
+            then
+                    echo "Contaienrd is default run-time activated by systemctl"
+		    Flag=1
+      		    crun=1
+            fi
+   fi
+
+   if [[ ( $key = "procn" ) ]]
+    then
+	    if ( (( ${containerd[$key]} >= 5 )) ) 
+            then
+                    echo "Containerd is the container run-time for the kubernetes cluster"
+		    Flag=1
+      		    crun=1
+            fi
+   fi
 done
-if [[ (( $crun -eq 0 )) && (( $drun -eq 0 )) ]]
-then
-echo "No Container compatible runtime"
-fi
+
 }
 
 
 
 runc1=( dockerd containerd)
 kuberun "${runc1[@]}"
-rncd
+runcd1
+
+
+echo "the contaiern flag is $Flag and the Docker falg is $DFlag"
+if [[ (( $crun -eq 0 )) && (( $drun -eq 0 )) ]]
+then
+echo "No Container compatible runtime"
+fi
+
