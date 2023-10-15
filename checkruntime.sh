@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 set -E
 declare -A dockerd
 declare -A containerd
@@ -21,9 +21,9 @@ dks1=0
 for k in ${arrayk[@]}
 do
 dk=`which $k`
-dk1=$?
+dk1="$?"
 dks=$(sudo systemctl status $k 2>&1 > /dev/null)
-dks1=$?
+dks1="$?"
 dks2=0
 dksd=`ps -ef | grep $k | grep -v grep | awk '{split($0,a," "); print a[8]}' | grep $k | wc -l`
 input="systemctl"
@@ -42,12 +42,12 @@ fi
 
 if [[ ( $k = "dockerd" ) ]]
 then
-dockerd+=([$input1]=$dk)
+dockerd+=([$input1]=$dk1)
 dockerd+=([$input]=$dks1)
 dockerd+=([$input2]=$dksd)
 elif [[ ( $k = "containerd" ) ]]
 then
-containerd+=([$input1]=$dk)
+containerd+=([$input1]=$dk1)
 containerd+=([$input]=$dks1)
 containerd+=([$input2]=$dksd)
 else
@@ -109,9 +109,9 @@ for key in "${!containerd[@]}"; do
 
    if [[ ( $key = "runc" ) ]]
     then
-            if [[ ( ${contaienrd[$key]} != "5")  ]]
+	    if [[ ( ${contaienrd[$key]} != "5")  ]]
             then
-                    echo "Container is installed in ${containerd[$key]}"
+                    echo "Container is installed in `which containerd`"
                     Flag=1
 		    crun=1
 	    fi
@@ -121,7 +121,7 @@ for key in "${!containerd[@]}"; do
     then
             if [[ ( ${containerd[$key]} = "0")  ]]
             then
-                    echo "Contaienrd is default run-time activated by systemctl"
+                    echo "Containerd is default run-time activated by systemctl"
 		    Flag=1
       		    crun=1
 	    else
@@ -153,7 +153,7 @@ kuberun "${runc1[@]}"
 runcd1
 
 
-echo "the contaiern flag is $Flag and the Docker falg is $DFlag"
+#echo "the containerd flag is $Flag and the Docker flag is $DFlag"
 if [[ (( $crun -eq 0 )) && (( $drun -eq 0 )) ]]
 then
 echo "No Container compatible runtime"
